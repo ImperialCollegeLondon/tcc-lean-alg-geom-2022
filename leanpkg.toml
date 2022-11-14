@@ -1,0 +1,8 @@
+[package]
+name = "tcc-alg-geom"
+version = "0.1"
+lean_version = "leanprover-community/lean:3.49.0"
+path = "src"
+
+[dependencies]
+mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "0f06bccf4308fff13a91dbc229592489f0ba73c1"}
