@@ -197,3 +197,11 @@ instance : large_category (SHEAF_OF_MODULES X) :=
 
 end SHEAF_OF_MODULES
 
+/-
+
+Possible future work: sheaves are an abelian category,
+pushforward and pullback of sheaves of modules, 
+tensor product of sheaves of modules.
+Construction of a sheaf of modules on Spec(R)
+from a module over a ring
+-/
