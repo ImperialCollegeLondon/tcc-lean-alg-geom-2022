@@ -9,6 +9,8 @@ import algebra.module.localized_module
 
 -/
 
+--open Module.category_theory -- puzzle
+
 variables {R : CommRing.{0}} (M : Module.{0} R)
 
 open algebraic_geometry
@@ -29,7 +31,8 @@ variable (P : prime_spectrum.Top R)
 --#check localized_module (P.as_ideal.prime_compl) M
 
 -- works
-example : module (localization (P.as_ideal.prime_compl)) (localized_module (P.as_ideal.prime_compl) M) := infer_instance
+example : module (localization (P.as_ideal.prime_compl)) 
+  (localized_module (P.as_ideal.prime_compl) M) := infer_instance
 
 namespace Module
 
@@ -77,7 +80,8 @@ def is_fraction {U : opens (prime_spectrum.Top R)} (f : Π x : U, localizations 
   ¬ (s ∈ x.1.as_ideal) ∧ f x * algebra_map _ _ s = algebra_map _ _ r
 -/
 
-example : module (localization (P.as_ideal.prime_compl)) (localized_module (P.as_ideal.prime_compl) M) := infer_instance
+example : module (localization (P.as_ideal.prime_compl)) 
+  (localized_module (P.as_ideal.prime_compl) M) := infer_instance
 
 
 /--
@@ -96,7 +100,7 @@ def is_fraction {U : topological_space.opens ↥(prime_spectrum.Top R)}
 The predicate `is_fraction` is "prelocal",
 in the sense that if it holds on `U` it holds on any open subset `V` of `U`.
 -/
-def Module.is_fraction_prelocal : prelocal_predicate (M.localizations) :=
+def is_fraction_prelocal : prelocal_predicate (M.localizations) :=
 { pred := λ U f, M.is_fraction f,
   res := by { rintro V U i f ⟨r, s, w⟩, exact ⟨r, s, λ x, w (i x)⟩ } }
 
@@ -130,32 +134,50 @@ subsheaf_to_Types (M.is_locally_fraction)
 
 open topological_space opposite
 
-def sections_subring (U : (opens (prime_spectrum.Top R))ᵒᵖ) :
+--#check structure_presheaf_in_CommRing
+def sections_add_subgroup (U : (opens (prime_spectrum.Top R))ᵒᵖ) :
   add_subgroup (Π x : unop U, M.localizations x) :=
 { carrier := { f | (M.is_locally_fraction).pred f },
   zero_mem' := begin
     rintro ⟨x, hx⟩,
     use [unop U, hx, 𝟙 _, 0, 1],
     intro y,
-    refine ⟨_, by squeeze_simp⟩ ,
+    refine ⟨_, _⟩,
+    { rw ←ideal.ne_top_iff_one, exact y.1.is_prime.1, },
+    { simp only [pi.zero_apply, id.def, smul_zero, localized_module.mk_linear_map_apply, 
+        localized_module.zero_mk]},
   end,
-  neg_mem' := sorry,
+  neg_mem' := begin
+    intros f hf x,
+    obtain ⟨V, hV, i, m, s, hmfs⟩ := hf x,
+    refine ⟨V, hV, i, -m, s, λ y, _⟩,
+    obtain ⟨h1, h2⟩ := hmfs y,
+    refine ⟨h1, _⟩,
+    simp only [id.def, pi.neg_apply, algebra_map_smul, smul_neg, 
+      localized_module.mk_linear_map_apply] at h2 ⊢,
+    rw h2,
+    refl,
+  end,
   add_mem' := begin
     intros a b ha hb x,
-    sorry,
+    obtain ⟨V, hV, i, m, s, hms⟩ := ha x,
+    obtain ⟨W, hW, j, n, t, hnt⟩ := hb x,
+    use V ⊓ W,
+    refine ⟨⟨hV,hW⟩, opens.inf_le_left _ _ ≫ i, t • m + s • n, s * t, λ y, _⟩,
+    obtain ⟨hs, hsa⟩ := hms ⟨y.1, y.2.1⟩,
+    obtain ⟨ht, htb⟩ := hnt ⟨y.1, y.2.2⟩,
+    split,
+    { intro H, cases y.1.is_prime.mem_or_mem H; contradiction, },
+    { simp only [pi.add_apply, id.def, smul_add, algebra_map_smul],
+      rw [mul_smul _ _ (b _), mul_comm, mul_smul, linear_map.map_add, linear_map.map_smul,
+        linear_map.map_smul],
+      congr', },
   end,
 }
 
 
 instance (U) : add_comm_group ((M.sheaf_in_Type).1.obj U) :=
-begin
-  delta sheaf_in_Type,
-  delta subsheaf_to_Types,
-  dsimp only,
-  delta subpresheaf_to_Types,
-  dsimp only,
-  apply_instance,
-end
+(M.sections_add_subgroup U).to_add_comm_group
 
 /-
 /--
@@ -176,9 +198,28 @@ def structure_presheaf_in_CommRing : presheaf CommRing (prime_spectrum.Top R) :=
 
 def presheaf_in_Ab : presheaf Ab.{0} (prime_spectrum.Top R):=
 { obj := λ U, AddCommGroup.of ((M.sheaf_in_Type).1.obj U),
-  map := _,
-  map_id' := _,
-  map_comp' := _ }
+  map := λ U V i, 
+  { to_fun := (M.sheaf_in_Type).1.map i,
+    map_zero' := rfl,
+    map_add' := λ x y, rfl, }, }
+
+open _root_.category_theory
+
+def presheaf_comp_forget :
+  M.presheaf_in_Ab ⋙ (forget Ab) ≅ (M.sheaf_in_Type).1 :=
+nat_iso.of_components
+  (λ U, iso.refl _)
+  (by tidy)
+
+/--
+The abelian sheaf on $Spec R$ associated to an R-module M, valued in `Ab`.
+-/
+def ab_sheaf : sheaf Ab (prime_spectrum.Top R) :=
+⟨M.presheaf_in_Ab, sorry⟩ 
+  -- We check the sheaf condition under `forget CommRing`.
+--  (is_sheaf_iff_is_sheaf_comp _ _).mpr
+--    (is_sheaf_of_iso (structure_presheaf_comp_forget R).symm
+--      (structure_sheaf_in_Type R).cond)⟩
 
 #exit
 def Module.to_presheaf_in_Type
@@ -187,3 +228,13 @@ def  Module.to_presheaf : presheaf.{0} Ab.{0} (forget_to_Top.obj (Spec.obj (oppo
   map := _,
   map_id' := _,
   map_comp' := _ }
+
+/-
+
+R(U) is a ring
+M(U) is a an ab group
+
+∀ U, module (R(U)) (M(U))
+∀ U → V, r in R(U), m in M(U), res(r•m)=res(r)•res(m)
+
+-/
