@@ -215,26 +215,10 @@ nat_iso.of_components
 The abelian sheaf on $Spec R$ associated to an R-module M, valued in `Ab`.
 -/
 def ab_sheaf : sheaf Ab (prime_spectrum.Top R) :=
-⟨M.presheaf_in_Ab, sorry⟩ 
-  -- We check the sheaf condition under `forget CommRing`.
---  (is_sheaf_iff_is_sheaf_comp _ _).mpr
---    (is_sheaf_of_iso (structure_presheaf_comp_forget R).symm
---      (structure_sheaf_in_Type R).cond)⟩
+⟨M.presheaf_in_Ab, (presheaf.is_sheaf_iff_is_sheaf_comp _ _).mpr 
+    (presheaf.is_sheaf_of_iso (M.presheaf_comp_forget).symm
+      (M.sheaf_in_Type).cond)⟩
 
-#exit
-def Module.to_presheaf_in_Type
-def  Module.to_presheaf : presheaf.{0} Ab.{0} (forget_to_Top.obj (Spec.obj (opposite.op R)) : Top.{0}) :=
-{ obj := λ U, _,
-  map := _,
-  map_id' := _,
-  map_comp' := _ }
 
-/-
+end Module
 
-R(U) is a ring
-M(U) is a an ab group
-
-∀ U, module (R(U)) (M(U))
-∀ U → V, r in R(U), m in M(U), res(r•m)=res(r)•res(m)
-
--/
