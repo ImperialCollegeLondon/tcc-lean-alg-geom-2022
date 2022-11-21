@@ -7,6 +7,7 @@ import algebra.module.localized_module
 
 # Sheaf of modules associated to a module over a ring
 
+This was *practice* for the 2nd alg geom lecture
 -/
 
 --open Module.category_theory -- puzzle
@@ -219,6 +220,70 @@ def ab_sheaf : sheaf Ab (prime_spectrum.Top R) :=
     (presheaf.is_sheaf_of_iso (M.presheaf_comp_forget).symm
       (M.sheaf_in_Type).cond)⟩
 
+def ab_sheaf.global_section_map : M →+ M.ab_sheaf.1.obj (opposite.op ⊤) :=
+{ to_fun := λ m, ⟨λ x, localized_module.mk_linear_map _ _ m, begin
+    intro x,
+    use [⊤, by simp only [subtype.val_eq_coe, localized_module.mk_linear_map_apply, exists_prop]],
+    use 𝟙 _,
+    use m,
+    use 1,
+    intro y,
+    split,
+    { rw ←ideal.ne_top_iff_one, exact y.1.is_prime.1, },
+    { simp only [map_one, localized_module.mk_linear_map_apply, id.def, one_smul], },
+  end⟩,
+  map_zero' := rfl,
+  map_add' :=λ a b, begin
+    ext,
+    simp only [localized_module.mk_linear_map_apply, subtype.coe_mk],
+    congr';
+    simp,
+  end }
+
+def sheaf_of_modules: SHEAF_OF_MODULES (Spec.obj (opposite.op R)).to_LocallyRingedSpace.to_RingedSpace :=
+{ ab_sheaf := M.ab_sheaf,
+  module_structure := λ U, 
+  { smul := λ r m, ⟨λ y, begin
+      let foo := r.1 y,
+      delta Module.localizations,
+      delta structure_sheaf.localizations at foo,
+      exact foo • (m.1 y),
+    end, begin
+--      simp only [subtype.val_eq_coe, id.def],
+      intro y,
+      obtain ⟨W ,hmW, iW, rW, sW, hW⟩ := r.2 y,
+      obtain ⟨X ,hmX, iX, mX, rX, hX⟩ := m.2 y,
+      use W ⊓ X,
+      refine ⟨⟨hmW, hmX⟩, _⟩,
+      use opens.inf_le_left _ _ ≫ iW,
+      refine ⟨rW • mX, _⟩,
+      use sW * rX,
+      rintro ⟨y, hWy, hXy⟩,
+      obtain ⟨hsW1, hsW2⟩ := hW ⟨y, hWy⟩,
+      obtain ⟨hrX1, hrX2⟩ := hX ⟨y, hXy⟩,
+      split,
+      { intro H, cases y.is_prime.mem_or_mem H; contradiction },
+      simp at hsW2 hrX2 ⊢,
+      rw smul_comm,
+      --swap, simp,
+      --simp at hW,
+      /-
+      Exists s ∈ R such that s non-vanishing on W ∩ X
+      and ∀ x ∈ W ∩ X, s • r(x) • m(x) = ?m_1 ∈ M
+      know hsW2: r(x)*sW=rW
+      and hrX2 : rX•m(x)=mX ∈ M
+      let's try sW*rX?
+      rW*mX
+      -/
+      sorry,
+    end⟩,
+    one_smul := sorry,
+    mul_smul := sorry,
+    smul_zero := sorry,
+    smul_add := sorry,
+    add_smul := sorry,
+    zero_smul := sorry },
+  compatibility_bit := sorry }
 
 end Module
 
