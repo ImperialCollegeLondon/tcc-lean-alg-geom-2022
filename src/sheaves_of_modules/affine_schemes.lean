@@ -241,7 +241,7 @@ def sheaf : sheaf Ab (prime_spectrum.Top R) :=
 and then we'll beef it up into a sheaf of modules
 -/
 
-#check Scheme
+--#check Scheme
 
 def sheaf_of_modules: SHEAF_OF_MODULES (Spec.to_LocallyRingedSpace.obj (op R)).to_SheafedSpace :=
 { ab_sheaf := M.sheaf,

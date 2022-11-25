@@ -69,8 +69,11 @@ variables (U V : (opens (X : TOP))ᵒᵖ) (i : U ⟶ V) -- V ⊆ U
 
 -- #check X.presheaf.obj U -- `CommRing`
 
-notation `𝓞_ ` X := λ (U : (opens (X : TOP))ᵒᵖ), X.presheaf.obj U
---notation `𝓞_ ` := RINGED_SPACE.presheaf.obj
+#check X.presheaf.obj
+
+
+--notation `𝓞_ ` X := λ (U : (opens (X : TOP))ᵒᵖ), X.presheaf.obj U
+notation `𝓞_ ` X := X.to_PresheafedSpace.presheaf.obj
 
 -- Now we can use notation (𝓞_ X) for the function which eats
 -- an open set and spits out a commutative ring

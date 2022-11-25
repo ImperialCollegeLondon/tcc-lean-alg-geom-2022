@@ -264,7 +264,6 @@ def sheaf_of_modules: SHEAF_OF_MODULES (Spec.obj (opposite.op R)).to_LocallyRing
       split,
       { intro H, cases y.is_prime.mem_or_mem H; contradiction },
       simp at hsW2 hrX2 ⊢,
-      rw smul_comm,
       --swap, simp,
       --simp at hW,
       /-

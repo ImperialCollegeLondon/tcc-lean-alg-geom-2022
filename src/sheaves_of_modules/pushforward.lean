@@ -48,14 +48,12 @@ def map (f : X ⟶ Y) (𝓜 : SHEAF_OF_MODULES X) : SHEAF_OF_MODULES Y :=
 --   end,
   compatibility_bit := λ U V i, begin
     rintro s (n : 𝓜.ab_sheaf.val.obj _),
-    dsimp only at s,
     change ↥((𝓞_ Y) U) at s,
     have foo := f.c.naturality i,
     have baz : (X : TOP) ⟶ (Y : TOP) := f.base,
     let j : ((topological_space.opens.map f.base).op.obj U) ⟶ ((topological_space.opens.map f.base).op.obj V) :=
       ((topological_space.opens.map f.base).op.map i),
     have bar := 𝓜.compatibility_bit _ _ j, -- need to pull back i; need to fix implicits
-    dsimp only at bar,
     -- might need pen and paper here
     /-
     Have foo: O_Y(U)->O_Y(V)->f_*O_X(V) = O_Y(U)->f_*O_X(U)->f_*O_X(V)
@@ -66,9 +64,9 @@ def map (f : X ⟶ Y) (𝓜 : SHEAF_OF_MODULES X) : SHEAF_OF_MODULES Y :=
     Proof: define r=image of s in O_X(f⁻¹(U))=f_*O_X(U). 
 
     -/
-    --calc
-    --(((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.map i) (s • n) = 
-    --((Y.to_PresheafedSpace.presheaf.map i) s : (𝓞_ Y) V) • (((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.map i) n : sorry
+    calc
+    (((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.map i) (s • n) = 
+    ((Y.to_PresheafedSpace.presheaf.map i) s : (𝓞_ Y) V) • (((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.map i) n : sorry
     sorry
   end }
 
