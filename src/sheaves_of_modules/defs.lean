@@ -13,14 +13,12 @@ namespace category_theory.Sheaf.hom
 
 open category_theory
 
-@[simp] lemma zero_app {C : Type*} [category C]
+--@[simp] 
+lemma zero_app {C : Type*} [category C]
   {J : grothendieck_topology C} {A : Type*}
   [category A] [preadditive A]
   {P Q : Sheaf J A} (U : Cᵒᵖ) :
-  (0 : P ⟶ Q).val.app U = (0 : P.val.obj ⟶ Q.val.obj) U := 
-begin
-  refl,
-end
+  (0 : P ⟶ Q).val.app U = (0 : P.val.obj ⟶ Q.val.obj) U := rfl
 
 end category_theory.Sheaf.hom
 /-
@@ -68,9 +66,6 @@ variable (X : RINGED_SPACE)
 variables (U V : (opens (X : TOP))ᵒᵖ) (i : U ⟶ V) -- V ⊆ U
 
 -- #check X.presheaf.obj U -- `CommRing`
-
-#check X.presheaf.obj
-
 
 --notation `𝓞_ ` X := λ (U : (opens (X : TOP))ᵒᵖ), X.presheaf.obj U
 notation `𝓞_ ` X := X.to_PresheafedSpace.presheaf.obj
@@ -149,14 +144,18 @@ instance : has_zero (𝓜 ⟶ 𝓝) :=
   { ab_sheaf := 0,
     map_smul := begin
       intros U r m,
-      simp only [Sheaf.hom.zero_app, pi.zero_apply, AddCommGroup.zero_apply, smul_zero],
+      simp,
     end } }
 
+#check category_theory.Sheaf.category_theory.category_id_val
 @[reducible] def id (𝓜 : SHEAF_OF_MODULES X) : 𝓜 ⟶ 𝓜 :=
 { ab_sheaf := 𝟙 𝓜.ab_sheaf,
   map_smul := begin
     intros U r m,
-    simp only [Sheaf.category_theory.category_id_val, nat_trans.id_app, id_apply],
+    simp only [category_theory.Sheaf.category_theory.category_id_val,
+ category_theory.id_apply,
+ eq_self_iff_true,
+ category_theory.nat_trans.id_app],
   end
    }
 
@@ -168,10 +167,10 @@ instance : has_zero (𝓜 ⟶ 𝓝) :=
 { ab_sheaf := φ.ab_sheaf ≫ ψ.ab_sheaf,
   map_smul := begin
     intros,
-    simp only [Sheaf.category_theory.category_comp_val, nat_trans.comp_app, comp_apply,
-      φ.map_smul, ψ.map_smul],
+    simp? [φ.map_smul, ψ.map_smul],
   end }
 
+-- don't need because comp reducible
 -- @[simp] lemma comp_ab_sheaf {𝓜 𝓝 𝓟 : SHEAF_OF_MODULES X}
 --   (φ : 𝓜 ⟶ 𝓝) (ψ : 𝓝 ⟶ 𝓟) : (comp φ ψ).ab_sheaf = φ.ab_sheaf ≫ ψ.ab_sheaf := rfl
 
