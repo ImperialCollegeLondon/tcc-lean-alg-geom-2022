@@ -27,8 +27,8 @@ instance (𝓜 : SHEAF_OF_MODULES X) (U : (opens (X : TOP))ᵒᵖ) :
 -/
 
 --instance (U) : module 
-#print notation _*
-#check Top.presheaf.pushforward_obj
+--#print notation _*
+--#check Top.presheaf.pushforward_obj
 
 /-
 
@@ -40,7 +40,7 @@ def pushforward_obj {X Y : Top.{w}} (f : X ⟶ Y) (ℱ : X.presheaf C) : Y.presh
 infix ` _* `: 80 := pushforward_obj
 -/
 
-#where
+--#where
 def map (f : X ⟶ Y) (𝓜 : SHEAF_OF_MODULES X) : SHEAF_OF_MODULES Y :=
 { ab_sheaf := (Top.sheaf.pushforward.{0} f.base).obj 𝓜.ab_sheaf,
   module_structure := λ U, by letI : module ↥((f.base _* X.to_PresheafedSpace.presheaf).obj U)
@@ -87,7 +87,7 @@ def map (f : X ⟶ Y) (𝓜 : SHEAF_OF_MODULES X) : SHEAF_OF_MODULES Y :=
 
 infix (name := hi) ` _* `: 80 := map
 
-#check Top.sheaf.pushforward
+--#check Top.sheaf.pushforward
 
 
 variables (f : X ⟶ Y) (𝓜 : SHEAF_OF_MODULES X)
