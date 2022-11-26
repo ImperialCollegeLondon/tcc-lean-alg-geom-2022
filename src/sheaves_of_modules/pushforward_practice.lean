@@ -26,9 +26,21 @@ instance (𝓜 : SHEAF_OF_MODULES X) (U : (opens (X : TOP))ᵒᵖ) :
   module ((𝓞_ X) U) (𝓜.obj U) := 𝓜.module_structure U
 -/
 
+--instance (U) : module 
+#print notation _*
+#check Top.presheaf.pushforward_obj
 
+/-
 
+/-- Pushforward a presheaf on `X` along a continuous map `f : X ⟶ Y`, obtaining a presheaf
+on `Y`. -/
+def pushforward_obj {X Y : Top.{w}} (f : X ⟶ Y) (ℱ : X.presheaf C) : Y.presheaf C :=
+(opens.map f).op ⋙ ℱ
 
+infix ` _* `: 80 := pushforward_obj
+-/
+
+#where
 def map (f : X ⟶ Y) (𝓜 : SHEAF_OF_MODULES X) : SHEAF_OF_MODULES Y :=
 { ab_sheaf := (Top.sheaf.pushforward.{0} f.base).obj 𝓜.ab_sheaf,
   module_structure := λ U, by letI : module ↥((f.base _* X.to_PresheafedSpace.presheaf).obj U)
@@ -47,7 +59,7 @@ def map (f : X ⟶ Y) (𝓜 : SHEAF_OF_MODULES X) : SHEAF_OF_MODULES Y :=
 --     exact module.comp_hom (𝓜.obj V) (f.c.app U),
 --   end,
   compatibility_bit := λ U V i, begin
-    rintro s (n : 𝓜.ab_sheaf.val.obj _),
+    rintro s n,--(n : 𝓜.ab_sheaf.val.obj _),
     change ↥((𝓞_ Y) U) at s,
     have foo := f.c.naturality i,
     have baz : (X : TOP) ⟶ (Y : TOP) := f.base,
@@ -64,11 +76,16 @@ def map (f : X ⟶ Y) (𝓜 : SHEAF_OF_MODULES X) : SHEAF_OF_MODULES Y :=
     Proof: define r=image of s in O_X(f⁻¹(U))=f_*O_X(U). 
 
     -/
+    letI : module (Y.to_PresheafedSpace.presheaf.obj U) 
+      (((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.obj U) := module_structure 𝓜 ((topological_space.opens.map f.base).op.obj U),
+
     calc
     (((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.map i) (s • n) = 
     ((Y.to_PresheafedSpace.presheaf.map i) s : (𝓞_ Y) V) • (((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.map i) n : sorry
     sorry
   end }
+
+infix (name := hi) ` _* `: 80 := map
 
 #check Top.sheaf.pushforward
 

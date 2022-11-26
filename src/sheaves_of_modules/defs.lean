@@ -13,12 +13,7 @@ namespace category_theory.Sheaf.hom
 
 open category_theory
 
---@[simp] 
-lemma zero_app {C : Type*} [category C]
-  {J : grothendieck_topology C} {A : Type*}
-  [category A] [preadditive A]
-  {P Q : Sheaf J A} (U : Cᵒᵖ) :
-  (0 : P ⟶ Q).val.app U = (0 : P.val.obj ⟶ Q.val.obj) U := rfl
+attribute [simps] category_theory.quiver.hom.has_zero
 
 end category_theory.Sheaf.hom
 /-
@@ -81,6 +76,7 @@ example : (𝓞_ X) U →+* (𝓞_ X) V := X.presheaf.map i
 
 end examples
 
+/-- Sheaf of modules for the structure sheaf of a ringed space. -/
 structure SHEAF_OF_MODULES (X : RINGED_SPACE) :=
 -- What is a sheaf of modules on a ringed space?
 -- Firstly we'll need a sheaf of abelian groups
@@ -144,10 +140,9 @@ instance : has_zero (𝓜 ⟶ 𝓝) :=
   { ab_sheaf := 0,
     map_smul := begin
       intros U r m,
-      simp,
+      simp, -- added @[simps]
     end } }
 
-#check category_theory.Sheaf.category_theory.category_id_val
 @[reducible] def id (𝓜 : SHEAF_OF_MODULES X) : 𝓜 ⟶ 𝓜 :=
 { ab_sheaf := 𝟙 𝓜.ab_sheaf,
   map_smul := begin
@@ -167,7 +162,7 @@ instance : has_zero (𝓜 ⟶ 𝓝) :=
 { ab_sheaf := φ.ab_sheaf ≫ ψ.ab_sheaf,
   map_smul := begin
     intros,
-    simp? [φ.map_smul, ψ.map_smul],
+    simp [φ.map_smul, ψ.map_smul],
   end }
 
 -- don't need because comp reducible

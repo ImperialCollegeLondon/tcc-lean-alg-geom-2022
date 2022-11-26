@@ -11,8 +11,8 @@ import algebra.module.localized_module
 -/
 
 -- last week we defined sheaves of modules on a sheaf of rings
--- and "proved" they were a category
--- this week let's make an example
+-- and gave them the structure of a category
+-- this week let's make an example of a sheaf of modules
 
 -- remark: there's a Lean repository where I push stuff
 -- git@github.com:ImperialCollegeLondon/tcc-lean-alg-geom-2022.git
@@ -47,6 +47,7 @@ M[1/f] ≠ M[1/g]
    f(Q)=m/r for all Q in V
    
    Hartshorne defines structure sheaf on Spec(R) in this way
+   and mathlib defines it like this too.
   }
 
 We're going to go for (2) becuase it avoids "canonical isomorphism"
@@ -54,37 +55,34 @@ We're going to go for (2) becuase it avoids "canonical isomorphism"
 
 NB variant (1') : If U is a basic open then you can define
  𝓜(U)=M[1/S] where S is all the elements of R which are nonvanishing on U
- and this avoids the problem; it's much more functorial
+ and this avoids the problem; it's much more functorial and this
+ is what we did in the initial schemes project.
 
 -/
 
--- let's see how they do it for rings
+-- In the below we just copy what they do for rings
 
-open algebraic_geometry
-
---#check AffineScheme
-
-/-
-
-First we'll define the sheaf of functions sending U to {f : U -> disjoint union of M_P
-such that F(P) ∈ M_P}
--/
-
---#check localized_module
-
-open category_theory
+open algebraic_geometry category_theory
 
 namespace Module
 
 /--
-The type family over `prime_spectrum R` consisting of the localization of a module
-over each point.
+`M.localizations P` : The type family over `(P : prime_spectrum.Top R)` consisting of the localization 
+`M_P` of the module `R`-module `M` over each point.
 -/
 @[derive add_comm_group]
 def localizations (P : prime_spectrum.Top R) : Type := localized_module (P.as_ideal.prime_compl) M
 
+--  * Redefine `localization` for monoids and rings to coincide with `localized_module`.
+
+/-
+protected abbreviation localization.at_prime := localization I.prime_compl
+-/
+
+/-- Let type class inference see through the `M.localizations` definition and
+  recognise the `R_P`-module structure on `M.localizations P := M_P` -/
 instance (P : prime_spectrum.Top R) : module (structure_sheaf.localizations R P) (M.localizations P) := 
-localized_module.is_module
+localized_module.is_module -- definitional equality.
 
 /-
 Then we'll define a predicate called "is_locally_fraction"
