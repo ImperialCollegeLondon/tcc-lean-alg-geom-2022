@@ -76,12 +76,12 @@ def map (f : X ⟶ Y) (𝓜 : SHEAF_OF_MODULES X) : SHEAF_OF_MODULES Y :=
     Proof: define r=image of s in O_X(f⁻¹(U))=f_*O_X(U). 
 
     -/
-    letI : module (Y.to_PresheafedSpace.presheaf.obj U) 
-      (((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.obj U) := module_structure 𝓜 ((topological_space.opens.map f.base).op.obj U),
+    --letI : module (Y.to_PresheafedSpace.presheaf.obj U) 
+    --  (((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.obj U) := module_structure 𝓜 ((topological_space.opens.map f.base).op.obj U),
 
-    calc
-    (((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.map i) (s • n) = 
-    ((Y.to_PresheafedSpace.presheaf.map i) s : (𝓞_ Y) V) • (((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.map i) n : sorry
+    --calc
+    --(((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.map i) (s • n) = 
+    --((Y.to_PresheafedSpace.presheaf.map i) s : (𝓞_ Y) V) • (((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.map i) n : sorry
     sorry
   end }
 
