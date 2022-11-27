@@ -59,14 +59,28 @@ def map (f : X ⟶ Y) (𝓜 : SHEAF_OF_MODULES X) : SHEAF_OF_MODULES Y :=
 --     exact module.comp_hom (𝓜.obj V) (f.c.app U),
 --   end,
   compatibility_bit := λ U V i, begin
-    rintro s n,--(n : 𝓜.ab_sheaf.val.obj _),
+    rintro s (n : 𝓜.ab_sheaf.val.obj _),
     change ↥((𝓞_ Y) U) at s,
     have foo := f.c.naturality i,
-    have baz : (X : TOP) ⟶ (Y : TOP) := f.base,
     let j : ((topological_space.opens.map f.base).op.obj U) ⟶ ((topological_space.opens.map f.base).op.obj V) :=
       ((topological_space.opens.map f.base).op.map i),
-    have bar := 𝓜.compatibility_bit _ _ j, -- need to pull back i; need to fix implicits
+    let r : (𝓞_ X) ((topological_space.opens.map f.base).op.obj U) := f.c.app U s,
+    --have bar := 𝓜.compatibility_bit _ _ j r n,
+    convert 𝓜.compatibility_bit _ _ j r n using 1,
+    rw fun_like.ext_iff at foo,
+    specialize foo s,
+    have moo : (f.base _* X.to_PresheafedSpace.presheaf).map i = X.to_PresheafedSpace.presheaf.map j,
+      refl,
+    rw fun_like.ext_iff at moo,
+    specialize moo r,
+    rw ← moo,
+    change _ = ((f.c.app U ≫ (f.base _* X.to_PresheafedSpace.presheaf).map i) s) • _,
+    rw ← foo,
+    refl,
+    
+    -- need to pull back i; need to fix implicits
     -- might need pen and paper here
+    --convert bar _ _,
     /-
     Have foo: O_Y(U)->O_Y(V)->f_*O_X(V) = O_Y(U)->f_*O_X(U)->f_*O_X(V)
     have bar : ∀ r ∈ O_X(f⁻¹(U)), m ∈ 𝓜(f⁻¹(U)),
@@ -82,7 +96,6 @@ def map (f : X ⟶ Y) (𝓜 : SHEAF_OF_MODULES X) : SHEAF_OF_MODULES Y :=
     --calc
     --(((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.map i) (s • n) = 
     --((Y.to_PresheafedSpace.presheaf.map i) s : (𝓞_ Y) V) • (((Top.sheaf.pushforward f.base).obj 𝓜.ab_sheaf).val.map i) n : sorry
-    sorry
   end }
 
 infix (name := hi) ` _* `: 80 := map
