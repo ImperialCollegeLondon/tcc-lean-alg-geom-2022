@@ -92,4 +92,46 @@ infix (name := hi) ` _* `: 80 := map
 
 variables (f : X ⟶ Y) (𝓜 : SHEAF_OF_MODULES X)
 
+def map_id (𝓜 : SHEAF_OF_MODULES X) : (𝟙 X) _* 𝓜 ≅ 𝓜 :=
+{ hom := 
+  { ab_sheaf := 
+    { val := 
+      { app := λ U, 𝓜.ab_sheaf.val.map $ category_theory.op_hom_of_le $ λ x hx, hx,
+        naturality' := begin
+          intros U V f,
+          ext,
+          simp only [category_theory.comp_apply],
+          sorry,
+        end } },
+      map_smul := begin
+        intros,
+        simp only [category_theory.op_hom_of_le],
+        sorry,        
+      end },
+    inv := 
+    { ab_sheaf :=
+      { val := 
+        { app := λ U, 𝓜.ab_sheaf.val.map $ category_theory.op_hom_of_le $ λ x hx, hx,
+          naturality' := begin
+            intros U V g,
+            ext,
+            simp only [category_theory.comp_apply],
+            sorry,
+          end } },
+      map_smul := sorry },
+  hom_inv_id' := begin
+    ext U m,
+    --dsimp only [category_theory.comp_apply],
+    unfold_coes,
+    dsimp only,
+    sorry,
+  end,
+  inv_hom_id' := sorry }
+
 end SHEAF_OF_MODULES
+
+example (Z : Type) [topological_space Z] (U V : (topological_space.opens Z)ᵒᵖ) (h : V.unop ⊆ U.unop): 
+  U ⟶ V :=
+begin
+  refine category_theory.op_hom_of_le h,
+end
