@@ -178,6 +178,7 @@ instance sections_module (U : (opens (prime_spectrum R))ᵒᵖ) :
   add_smul := sorry,
   zero_smul := sorry }
 
+#exit
 /--
 The functions satisfying `is_locally_fraction` form a subgroup.
 -/
